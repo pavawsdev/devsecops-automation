@@ -1,0 +1,2 @@
+# accepted risks - each line needs a ticket reference and expiry in the risk register
+CVE-2024-0001

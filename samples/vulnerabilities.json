@@ -1,0 +1,17 @@
+{
+  "vulnerabilities": [
+    {"cve_id": "CVE-2024-6387", "asset": "bastion-01", "package": "openssh-server",
+     "installed_version": "9.6p1", "fixed_version": "9.8p1", "severity": "CRITICAL",
+     "cvss": 8.1, "title": "regreSSHion: unauthenticated RCE in sshd"},
+    {"cve_id": "CVE-2023-44487", "asset": "api-gateway", "package": "golang.org/x/net",
+     "installed_version": "0.15.0", "fixed_version": "0.17.0", "severity": "HIGH",
+     "cvss": 7.5, "title": "HTTP/2 rapid reset DoS"},
+    {"cve_id": "CVE-2024-0001", "asset": "web-01", "package": "libfoo",
+     "installed_version": "1.0", "fixed_version": null, "severity": "CRITICAL",
+     "cvss": 9.0, "title": "=HYPERLINK(\"http://evil.example\")"},
+    {"cve_id": "CVE-2022-1234", "asset": "web-01", "package": "zlib",
+     "installed_version": "1.2.11", "fixed_version": "1.2.12", "severity": "LOW",
+     "cvss": 3.1, "title": "minor issue"},
+    {"asset": "malformed-record-without-cve"}
+  ]
+}
