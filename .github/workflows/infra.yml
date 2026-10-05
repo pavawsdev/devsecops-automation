@@ -1,0 +1,105 @@
+# Infrastructure pipeline: one Terraform codebase, three environments.
+#
+#   pull request  -> static checks + plan for dev, stage AND prod (read-only),
+#                    so reviewers see the effect on every environment before merging
+#   merge to main -> dev (auto) -> stage (approval) -> prod (approval), same commit
+#   nightly       -> plan every environment and fail on drift
+name: infra
+
+on:
+  pull_request:
+    paths:
+      - "infra/**"
+      - ".github/workflows/infra.yml"
+      - ".github/workflows/terraform-env.yml"
+  push:
+    branches: [main]
+    paths:
+      - "infra/**"
+      - ".github/workflows/infra.yml"
+      - ".github/workflows/terraform-env.yml"
+  schedule:
+    - cron: "0 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: infra-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra
+    steps:
+      - uses: actions/checkout@v4 # pin to a full commit SHA in production
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.15.5"
+          terraform_wrapper: false
+      - run: terraform fmt -check -recursive
+      - run: terraform init -backend=false
+      - run: terraform validate
+      - run: terraform test # per-env expectations + guardrails, mocked AWS
+      - run: pipx run checkov -d . --framework terraform --skip-path tests --compact --quiet
+
+  plan:
+    # Skipped until the AWS OIDC roles are configured (see infra/README.md).
+    if: vars.TF_PLAN_ROLE_ARN_DEV != '' && (github.event_name == 'pull_request' || github.event_name == 'schedule')
+    needs: checks
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - environment: dev
+            plan_role_arn: ${{ vars.TF_PLAN_ROLE_ARN_DEV }}
+          - environment: stage
+            plan_role_arn: ${{ vars.TF_PLAN_ROLE_ARN_STAGE }}
+          - environment: prod
+            plan_role_arn: ${{ vars.TF_PLAN_ROLE_ARN_PROD }}
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/terraform-env.yml
+    with:
+      environment: ${{ matrix.environment }}
+      plan_role_arn: ${{ matrix.plan_role_arn }}
+      fail_on_changes: ${{ github.event_name == 'schedule' }}
+
+  dev:
+    if: vars.TF_PLAN_ROLE_ARN_DEV != '' && github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    needs: checks
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/terraform-env.yml
+    with:
+      environment: dev
+      plan_role_arn: ${{ vars.TF_PLAN_ROLE_ARN_DEV }}
+      apply: true
+
+  stage:
+    needs: dev
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/terraform-env.yml
+    with:
+      environment: stage
+      plan_role_arn: ${{ vars.TF_PLAN_ROLE_ARN_STAGE }}
+      apply: true
+
+  prod:
+    needs: stage
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/terraform-env.yml
+    with:
+      environment: prod
+      plan_role_arn: ${{ vars.TF_PLAN_ROLE_ARN_PROD }}
+      apply: true

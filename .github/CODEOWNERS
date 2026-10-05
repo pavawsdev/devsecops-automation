@@ -1,0 +1,8 @@
+# Requires branch protection on main with "Require review from Code Owners".
+# TODO: replace the placeholder teams with real GitHub teams.
+/infra/                        @your-org/platform-team
+/infra/envs/prod/              @your-org/platform-team @your-org/security-team
+/infra/envs/*/checkov.yaml     @your-org/security-team
+/infra/guardrails.tf           @your-org/platform-team @your-org/security-team
+/.github/workflows/            @your-org/platform-team @your-org/security-team
+/.github/CODEOWNERS            @your-org/security-team
