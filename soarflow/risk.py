@@ -10,13 +10,16 @@ def score(alert: dict, intel: dict[str, dict], asset_criticality: str = "normal"
     reasons.append(f"alert severity {alert.get('severity', 'low')} -> {total}")
     worst = max((i["score"] for i in intel.values() if i.get("score") is not None), default=None)
     if worst is not None and worst >= 80:
-        total += 25; reasons.append(f"IP reputation {worst} >= 80 -> +25")
+        total += 25
+        reasons.append(f"IP reputation {worst} >= 80 -> +25")
     elif worst is not None and worst >= 50:
-        total += 10; reasons.append(f"IP reputation {worst} >= 50 -> +10")
+        total += 10
+        reasons.append(f"IP reputation {worst} >= 50 -> +10")
     if any(i.get("status") != "ok" for i in intel.values()):
         reasons.append("some enrichment unavailable -> analyst review required")
     if asset_criticality == "crown_jewel":
-        total += 15; reasons.append("crown-jewel asset -> +15")
+        total += 15
+        reasons.append("crown-jewel asset -> +15")
     return min(total, 100), reasons
 
 

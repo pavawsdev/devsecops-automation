@@ -34,7 +34,8 @@ def test_ti_failure_degrades_gracefully():
 def test_ti_results_are_cached():
     responses.get("https://ti.example.com/ip/8.8.4.4", json={"score": 90})
     ti = ThreatIntelClient("https://ti.example.com", "k")
-    ti.ip_reputation("8.8.4.4"); ti.ip_reputation("8.8.4.4")
+    ti.ip_reputation("8.8.4.4")
+    ti.ip_reputation("8.8.4.4")
     assert len(responses.calls) == 1
 
 
