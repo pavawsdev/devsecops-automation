@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+reports/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+tfplan
+tfplan.json
+crash.log
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/

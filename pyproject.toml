@@ -1,0 +1,14 @@
+[project]
+name = "devsecops-automation"
+version = "1.0.0"
+requires-python = ">=3.10"
+dependencies = ["requests>=2.32"]
+
+[project.scripts]
+vulnauto = "vulnauto.cli:main"
+
+[tool.ruff]
+line-length = 100
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
