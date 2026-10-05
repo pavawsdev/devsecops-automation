@@ -1,0 +1,3 @@
+# Accepted risks for stage, applied when scanning the stage plan. Changes need security review (CODEOWNERS).
+skip-check:
+  - CKV_AWS_144 # DR replication is prod-only

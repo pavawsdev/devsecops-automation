@@ -1,0 +1,3 @@
+# Prod has no environment-level accepted risks. Keep it that way; per-resource exceptions
+# live next to the resource as justified #checkov:skip comments.
+skip-check: []

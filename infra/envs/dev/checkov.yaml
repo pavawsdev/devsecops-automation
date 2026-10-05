@@ -1,0 +1,6 @@
+# Accepted risks for dev, applied when scanning the dev plan. Changes need security review (CODEOWNERS).
+# Dev holds throwaway reports only; these controls are cost trade-offs, enforced from stage up.
+skip-check:
+  - CKV_AWS_21  # versioning off in dev
+  - CKV_AWS_18  # no access logging in dev
+  - CKV_AWS_144 # no cross-region replication in dev
