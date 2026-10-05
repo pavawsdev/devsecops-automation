@@ -2,7 +2,7 @@
 name = "devsecops-automation"
 version = "1.0.0"
 requires-python = ">=3.10"
-dependencies = ["requests>=2.32"]
+dependencies = ["requests>=2.34.2"]
 
 [project.scripts]
 vulnauto = "vulnauto.cli:main"
