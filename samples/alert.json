@@ -1,0 +1,3 @@
+{"id": "SPL-88231", "source": "splunk", "rule": "SSH brute force followed by success",
+ "severity": "critical", "src_ip": "185.220.101.4", "user": "deploy", "host": "bastion-01",
+ "message": "12 failures then success for deploy from 185.220.101.4 (also seen 10.20.1.7)"}
